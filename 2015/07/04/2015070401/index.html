@@ -1,0 +1,475 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+  <meta name="baidu_union_verify" content="d1952c66cf48912e21c18c7c581f382a">
+  <meta name="360-site-verification" content="67fbcc5a67f4c65c057315b28fa0b2c8" />
+<meta name="google-site-verification" content="2GzxQ0VtXwTSUdmGm6DzcmhTzM_I9QmzCb_pzpMzD88" />
+  
+    <title>VIM命令备忘录 | Sponge No.43</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Chan Zou">
+    
+    <meta name="description" content="前言VIM(连同VI)是重要的文本编辑环境，也是博客写作的基本技能点。
+但是经过前辈提醒，把VIM与Microsoft Office等同起来是非常不利于发挥VIM原有的强大作用的。因此制作此备忘录。VIM的命令比较繁复，仅选区现阶段频繁使用的命令收录，日后视情况更新。
+插入命令i 在当前位置前插入I">
+    
+    
+    
+    
+    <link rel="alternate" href="atom.xml" title="Sponge No.43" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            var _bdId ='391982416296a0d54221f59fe35250d4';
+             hm.src = "//hm.baidu.com/hm.js?" + _bdId;
+             var s = document.getElementsByTagName("script")[0]; 
+             s.parentNode.insertBefore(hm, s);
+        })();
+    </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+     
+</head>
+
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Sponge No.43">Sponge No.43</a></h1>
+				<a class="blog-motto"></a>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+                                            <form class="search" action=http://zhannei.baidu.com/cse/search target="_blank">
+                                            <label>Search</label>
+                                        <input name="s" type="hidden" value= null ><input type="text" name="q" size="30" placeholder="搜索"><br>
+					
+					</li>
+				</ul>
+                            </nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/04/2015070401/" title="VIM命令备忘录" itemprop="url">VIM命令备忘录</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://yoursite.com" title="Chan Zou">Chan Zou</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-07-05T01:00:00.000Z" itemprop="datePublished">2015-07-04</time>
+    更新日期:<time datetime="2018-02-19T00:07:16.281Z" itemprop="dateModified">2018-02-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#插入命令"><span class="toc-number">2.</span> <span class="toc-text">插入命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#移动命令"><span class="toc-number">3.</span> <span class="toc-text">移动命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#撤销与重做"><span class="toc-number">4.</span> <span class="toc-text">撤销与重做</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查找命令"><span class="toc-number">5.</span> <span class="toc-text">查找命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#删除命令"><span class="toc-number">6.</span> <span class="toc-text">删除命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复制粘贴"><span class="toc-number">7.</span> <span class="toc-text">复制粘贴</span></a></li></ol>
+		</div>
+		
+		<h2 id="前言">前言</h2><p>VIM(连同VI)是重要的文本编辑环境，也是博客写作的基本技能点。</p>
+<p>但是经过前辈提醒，把VIM与Microsoft Office等同起来是非常不利于发挥VIM原有的强大作用的。因此制作此备忘录。VIM的命令比较繁复，仅选区现阶段频繁使用的命令收录，日后视情况更新。</p>
+<h2 id="插入命令">插入命令</h2><p>i 在当前位置前插入<br>I 在当前行首插入<br>a 在当前位置后插入<br>A 在当前行尾插入<br>o 在当前行之后插入一行<br>O 在当前行之前插入一行</p>
+<h2 id="移动命令">移动命令</h2><p>h 左移一个字符<br>l 右移一个字符<br>k 上移一个字符<br>j 下移一个字符<br>以上四个命令可以配合数字使用，比如20j就是向下移动20行，5h就是向左移动5个字符<br>w 向后移动一个单词（光标停在单词首部），如果已到行尾，则转至下一行行首<br>b 向前移动一个单词<br>e，同w，只不过是光标停在单词尾部<br>ge，同b，光标停在单词尾部<br>^ 移动到本行第一个非空白字符上<br>0（数字0）移动到本行第一个字符上<br>$ 移动到行尾 3$ 移动到下面3行的行尾<br>跳到指定行，冒号+行号，回车，比如跳到240行就是 :240回车<br>Ctrl + e 向下滚动一行<br>Ctrl + y 向上滚动一行<br>Ctrl + d 向下滚动半屏<br>Ctrl + u 向上滚动半屏<br>Ctrl + f 向下滚动一屏<br>Ctrl + b 向上滚动一屏</p>
+<h2 id="撤销与重做">撤销与重做</h2><p>u 撤销<br>U 撤销对整行的操作<br>Ctrl + r 重做（Redo）</p>
+<h2 id="查找命令">查找命令</h2><p>/text　　查找text，按n健查找下一个，按N健查找前一个<br>?text　　查找text，反向查找，按n健查找下一个，按N健查找前一个<br>(vim中有一些特殊字符在查找时需要转义　　.<em>[]^%/?~$）<br>:set ignorecase　　忽略大小写的查找<br>:set noignorecase　　不忽略大小写的查找<br>查找很长的词，如果一个词很长，键入麻烦，可以将光标移动到该词上，按</em>或#键即可以该单词进行搜索，相当于/搜索。而#命令相当于?搜索<br>:set hlsearch　　高亮搜索结果，所有结果都高亮显示，而不是只显示一个匹配<br>:set nohlsearch　　关闭高亮搜索显示<br>:nohlsearch　　关闭当前的高亮显示，如果再次搜索或者按下n或N键，则会再次高亮</p>
+<h2 id="删除命令">删除命令</h2><p>x 删除当前字符<br>3x 删除当前光标开始向后三个字符<br>X 删除当前字符的前一个字符<br>dd 删除当前行<br>10d 删除当前行开始的10行<br>kdgg 删除当前行之前所有行</p>
+<h2 id="复制粘贴">复制粘贴</h2><p>yy 拷贝当前行<br>nyy 拷贝当前后开始的n行<br>p  在当前光标后粘贴<br>正常模式下按v（逐字）或V（逐行）进入可视模式，然后用jklh命令移动即可选择某些行或字符，再按y即可复制<br>ddp交换当前行和其下一行</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/hexo/">hexo</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://yoursite.com/2015/07/04/2015070401/" data-title="VIM命令备忘录 | Sponge No.43" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/07/04/2015070402/" title="HDL Lesson 101">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  HDL Lesson 101</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/06/29/2015062802/"  title="How to insert a mathematical equation">
+ <strong>NEXT:</strong><br/> 
+ <span>How to insert a mathematical equation
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	
+	<div class="ds-thread" data-title="VIM命令备忘录" data-thread-key="2015070401" data-author-key="Chan Zou" data-url="http://yoursite.com/post/2015070401"></div>
+	
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#插入命令"><span class="toc-number">2.</span> <span class="toc-text">插入命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#移动命令"><span class="toc-number">3.</span> <span class="toc-text">移动命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#撤销与重做"><span class="toc-number">4.</span> <span class="toc-text">撤销与重做</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查找命令"><span class="toc-number">5.</span> <span class="toc-text">查找命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#删除命令"><span class="toc-number">6.</span> <span class="toc-text">删除命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复制粘贴"><span class="toc-number">7.</span> <span class="toc-text">复制粘贴</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	<div class="social-list" class="clearfix">
+		
+		
+		
+		
+		
+	</div>
+</div>
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Algorithm/" title="Algorithm">Algorithm<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Data-Structure/" title="Data Structure">Data Structure<sup>2</sup></a></li>
+		
+			<li><a href="/tags/HDL/" title="HDL">HDL<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/MOOCs/" title="MOOCs">MOOCs<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Neural-Network/" title="Neural Network">Neural Network<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Statistics/" title="Statistics">Statistics<sup>3</sup></a></li>
+		
+			<li><a href="/tags/hexo/" title="hexo">hexo<sup>3</sup></a></li>
+		
+			<li><a href="/tags/spider/" title="spider">spider<sup>1</sup></a></li>
+		
+			<li><a href="/tags/spiders/" title="spiders">spiders<sup>2</sup></a></li>
+		
+			<li><a href="/tags/travel/" title="travel">travel<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情鏈接</p>
+    <ul>
+      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
+      <li><a href="http://gengbiao.me" target="_blank" title="coney">coney's Blog</a></li>
+    </ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="atom.xml" target="_blank" title="rss">RSS 訂閱</a>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">標簽雲</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Algorithm/" style="font-size: 13.33px;">Algorithm</a><a href="/tags/Data-Structure/" style="font-size: 13.33px;">Data Structure</a><a href="/tags/HDL/" style="font-size: 10px;">HDL</a><a href="/tags/Hadoop/" style="font-size: 10px;">Hadoop</a><a href="/tags/MOOCs/" style="font-size: 20px;">MOOCs</a><a href="/tags/Neural-Network/" style="font-size: 20px;">Neural Network</a><a href="/tags/Statistics/" style="font-size: 16.67px;">Statistics</a><a href="/tags/hexo/" style="font-size: 16.67px;">hexo</a><a href="/tags/spider/" style="font-size: 10px;">spider</a><a href="/tags/spiders/" style="font-size: 13.33px;">spiders</a><a href="/tags/travel/" style="font-size: 10px;">travel</a>
+    </div>
+  </div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+    
+            <p class="copyright"> © 2018 
+		
+		<a href="http://yoursite.com" target="_blank" title="Chan Zou">Chan Zou</a>
+		
+            && Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> && Theme by <a href="http://gengbiao.me" target="_blank" title="coney">coney</a>
+            </div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+<script>
+    
+        var _bdImg = '4';
+    
+    window._bd_share_config={
+        "common":{
+            "bdSnsKey":{
+
+            },
+            "bdText":"",
+            "bdMini":"2",
+            "bdMiniList":[
+                "qzone",
+                "tsina",
+                "weixin",
+                "renren",
+                "tqq",
+                "tieba",
+                "douban",
+                "sqq",
+                "diandian",
+                "huaban",
+                "youdao",
+                "mail",
+                "ty",
+                "fbook",
+                "twi",
+                "linkedin",
+                "copy",
+                "print"
+            ],
+            "bdPic":"",
+            "bdStyle":"0",
+            "bdSize":"16"
+        },
+        "slide":{
+            "type":"slide",
+            "bdImg":_bdImg,
+            "bdPos":"right",
+            "bdTop":"350"
+        },
+        "image":{
+            "viewList":[
+                "weixin",
+                "qzone",
+                "tsina",
+                "renren",
+                "douban",
+                "tqq"
+            ],
+            "viewText":"分享：",
+            "viewSize":"16"
+        },
+        "selectShare":{
+            "bdContainerClass":null,
+            "bdSelectMiniList":[
+                "weixin",
+                "qzone",
+                "tsina",
+                "renren",
+                "douban",
+                "tqq"
+            ]
+        }
+    };
+    with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+  </body>
+</html>
+

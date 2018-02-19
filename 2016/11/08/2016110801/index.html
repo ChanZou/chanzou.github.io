@@ -1,0 +1,473 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+  <meta name="baidu_union_verify" content="d1952c66cf48912e21c18c7c581f382a">
+  <meta name="360-site-verification" content="67fbcc5a67f4c65c057315b28fa0b2c8" />
+<meta name="google-site-verification" content="2GzxQ0VtXwTSUdmGm6DzcmhTzM_I9QmzCb_pzpMzD88" />
+  
+    <title>Variational Autoencoder, A Generative Deep Model (1) | Sponge No.43</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Chan Zou">
+    
+    <meta name="description" content="Variational Autoencoder rised as a rocket and have emerged as one of the most popular approaches to unsupervised learning of complicated distribution ">
+    
+    
+    
+    
+    <link rel="alternate" href="atom.xml" title="Sponge No.43" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            var _bdId ='391982416296a0d54221f59fe35250d4';
+             hm.src = "//hm.baidu.com/hm.js?" + _bdId;
+             var s = document.getElementsByTagName("script")[0]; 
+             s.parentNode.insertBefore(hm, s);
+        })();
+    </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+     
+</head>
+
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Sponge No.43">Sponge No.43</a></h1>
+				<a class="blog-motto"></a>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+                                            <form class="search" action=http://zhannei.baidu.com/cse/search target="_blank">
+                                            <label>Search</label>
+                                        <input name="s" type="hidden" value= null ><input type="text" name="q" size="30" placeholder="搜索"><br>
+					
+					</li>
+				</ul>
+                            </nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/08/2016110801/" title="Variational Autoencoder, A Generative Deep Model (1)" itemprop="url">Variational Autoencoder, A Generative Deep Model (1)</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://yoursite.com" title="Chan Zou">Chan Zou</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-11-08T21:00:00.000Z" itemprop="datePublished">2016-11-08</time>
+    更新日期:<time datetime="2018-02-19T00:07:16.281Z" itemprop="dateModified">2018-02-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Clarification"><span class="toc-number">1.</span> <span class="toc-text">Clarification</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Latent_Variable"><span class="toc-number">2.</span> <span class="toc-text">Latent Variable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Variational_Autoencoder"><span class="toc-number">3.</span> <span class="toc-text">Variational Autoencoder</span></a></li></ol>
+		</div>
+		
+		<p>Variational Autoencoder rised as a rocket and have emerged as one of the most popular approaches to unsupervised learning of complicated distribution since it was proposed three years ago. This article was written based on my understanding of the merits behind VAEs.</p>
+<h2 id="Clarification">Clarification</h2><p>Including ‘Autoencoder’, the name of VAE often leads people to compare VAE with classical autoencoder. Actually, the methematical basis of VAE has little to do with classical autoencoders. VAE is, unsurprisingly, consist of a encoder and decoder (its more delicated cousins may have other parts) and this is the only reason it is called ‘autoencoder’. It is actually a family of probabilistic graphical models whose main goal is to maximize the probability of each $X$ in the training set under the generative process:<br>$$$P(X) = \int P(X\mid z;\theta)P(z)dz$$<br>This equation should be explained below.</p>
+<h2 id="Latent_Variable">Latent Variable</h2><p>Generative models essentially learn the distribution of variables out of latent variables. For example, if we would like to generate images of handwritten digits, we would better have a latent variable z from the set 0 to 9 and have a posterior distribution of X upon z. And we’d bettern ensure that for every data point X there is at least one setting of the latent variables causes our model to generate point very similar to X. That is what is happening behind the equation above. $P(X\mid z; \theta)$ stands for a function that allows us to explicitly show the dependency of X on z. Not hard to tell this is maximum likelihood.</p>
+<h2 id="Variational_Autoencoder">Variational Autoencoder</h2><p>In VAE, the choice of this output distribution is Gaussian $P(X\mid z;\theta) = N(X\mid f(z;\theta, \sigma^{2}*I))$. This is justified by the intuition that some z needs to result in points that are merely like X and are not identical to X. Note that complex priors $f(z;\theta)$ in the latent is also nice especially in cases where you know something should make sense or you have a desired latent distribution.</p>
+<p>Two questions remain unsolved for VAEs to deal with: how to define the latent variables $z$; how to deal with the integral over $z$.</p>
+<p>For the first question, VAEs assume there is no simple interpretation of the dimensions of $z$ and instead assert that samples of $z$ can be drawn from a Gaussian distribution. Because we would like to avoid explicitly descibe the dependencies among dimensions. In the handwriting digits example, the latent decisions that the model needs to make is rather complicated. Not just which digit to draw, it also needs to describe scale, angle, stroke width and you may come up with more. These properties can be correlated. If Gaussian distribtion seems to be an unreasonable choice for you - I understand, it is way too ‘simple’ - please notice that any distribution in $d$ dimensions can be generated by taking a set of $d$ variables that are normally distributed and mapping them through a sufficiently complicated function. Fortunately, we have such a function with sufficient capacity, neural network.</p>
+<p><img src="http://ww4.sinaimg.cn/mw690/7446635dgw1f9mcsz5376j20qg0cmdh7.jpg" alt="From Gaussian distribution to a ring"><br>Left: $X=g(z)$; Right: $g(z)=z/10+z/\left|z\right|$</p>
+<p>Then all that remains is how to maximize the integral. In theory, $P(X)$ can be estimated by sampling a large number of $z$ values and compute $P(X) \approx \frac{1}{n}\sum_i P(X|z_i)$. But notice that we are in high dimensional spaces and $n$ might need to be extremely large, as described in curse of dimensionality.<strong>So we would like to find $z$ that are likely to produce X</strong>, given for most $z$, $P(X\mid z)$ will be nearly zero. This means we need a new function $Q(z\mid X)$ which can take a value of X and produce a distribution under which z values are likely to produce X. We hope that the space of $z$ values under this posterior distribution will be much smaller than the space under prior $P(z)$ and we choose KL divergence to describe the diffenrence:</p>
+<p>$$D[Q(z)\parallel P(z\mid X)] = E_{z \sim Q}[logQ(z)-logP(z \mid X)]$$</p>
+<p>By applying Bayes rule, it can be translated as below and <strong>Q(z) can be any distribution</strong>, so we construct $Q$ which depends on $X$.</p>
+<p>$$logP(X) - D[Q(z\mid X)\parallel P(z \mid X)] = E_{z \sim Q}[logP(X \mid z)] - D[Q(z\mid X)\parallel P(z)]$$</p>
+<p>So the left side of this equation includes term we would like to maximize $logP(X)$ with an error term which makes $Q$ produce $z$ that can reproduce $X$. What about the right side? That is the core, we can optimize it using gradient descent!</p>
+<p>How exciting, we just transform conceptual terms into something we can actually optimize! The next post will continue explaining VAEs for you.</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://yoursite.com/2016/11/08/2016110801/" data-title="Variational Autoencoder, A Generative Deep Model (1) | Sponge No.43" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/11/09/2016110901/" title="Variational Autoencoder, A Generative Deep Model (2)">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Variational Autoencoder, A Generative Deep Model (2)</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/04/03/2016040301/"  title="K-Means Realization in Hadoop">
+ <strong>NEXT:</strong><br/> 
+ <span>K-Means Realization in Hadoop
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	
+	<div class="ds-thread" data-title="Variational Autoencoder, A Generative Deep Model (1)" data-thread-key="2016110801" data-author-key="Chan Zou" data-url="http://yoursite.com/post/2016110801"></div>
+	
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Clarification"><span class="toc-number">1.</span> <span class="toc-text">Clarification</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Latent_Variable"><span class="toc-number">2.</span> <span class="toc-text">Latent Variable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Variational_Autoencoder"><span class="toc-number">3.</span> <span class="toc-text">Variational Autoencoder</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	<div class="social-list" class="clearfix">
+		
+		
+		
+		
+		
+	</div>
+</div>
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Algorithm/" title="Algorithm">Algorithm<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Data-Structure/" title="Data Structure">Data Structure<sup>2</sup></a></li>
+		
+			<li><a href="/tags/HDL/" title="HDL">HDL<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/MOOCs/" title="MOOCs">MOOCs<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Neural-Network/" title="Neural Network">Neural Network<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Statistics/" title="Statistics">Statistics<sup>3</sup></a></li>
+		
+			<li><a href="/tags/hexo/" title="hexo">hexo<sup>3</sup></a></li>
+		
+			<li><a href="/tags/spider/" title="spider">spider<sup>1</sup></a></li>
+		
+			<li><a href="/tags/spiders/" title="spiders">spiders<sup>2</sup></a></li>
+		
+			<li><a href="/tags/travel/" title="travel">travel<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情鏈接</p>
+    <ul>
+      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
+      <li><a href="http://gengbiao.me" target="_blank" title="coney">coney's Blog</a></li>
+    </ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="atom.xml" target="_blank" title="rss">RSS 訂閱</a>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">標簽雲</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Algorithm/" style="font-size: 13.33px;">Algorithm</a><a href="/tags/Data-Structure/" style="font-size: 13.33px;">Data Structure</a><a href="/tags/HDL/" style="font-size: 10px;">HDL</a><a href="/tags/Hadoop/" style="font-size: 10px;">Hadoop</a><a href="/tags/MOOCs/" style="font-size: 20px;">MOOCs</a><a href="/tags/Neural-Network/" style="font-size: 20px;">Neural Network</a><a href="/tags/Statistics/" style="font-size: 16.67px;">Statistics</a><a href="/tags/hexo/" style="font-size: 16.67px;">hexo</a><a href="/tags/spider/" style="font-size: 10px;">spider</a><a href="/tags/spiders/" style="font-size: 13.33px;">spiders</a><a href="/tags/travel/" style="font-size: 10px;">travel</a>
+    </div>
+  </div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+    
+            <p class="copyright"> © 2018 
+		
+		<a href="http://yoursite.com" target="_blank" title="Chan Zou">Chan Zou</a>
+		
+            && Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> && Theme by <a href="http://gengbiao.me" target="_blank" title="coney">coney</a>
+            </div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+<script>
+    
+        var _bdImg = '4';
+    
+    window._bd_share_config={
+        "common":{
+            "bdSnsKey":{
+
+            },
+            "bdText":"",
+            "bdMini":"2",
+            "bdMiniList":[
+                "qzone",
+                "tsina",
+                "weixin",
+                "renren",
+                "tqq",
+                "tieba",
+                "douban",
+                "sqq",
+                "diandian",
+                "huaban",
+                "youdao",
+                "mail",
+                "ty",
+                "fbook",
+                "twi",
+                "linkedin",
+                "copy",
+                "print"
+            ],
+            "bdPic":"",
+            "bdStyle":"0",
+            "bdSize":"16"
+        },
+        "slide":{
+            "type":"slide",
+            "bdImg":_bdImg,
+            "bdPos":"right",
+            "bdTop":"350"
+        },
+        "image":{
+            "viewList":[
+                "weixin",
+                "qzone",
+                "tsina",
+                "renren",
+                "douban",
+                "tqq"
+            ],
+            "viewText":"分享：",
+            "viewSize":"16"
+        },
+        "selectShare":{
+            "bdContainerClass":null,
+            "bdSelectMiniList":[
+                "weixin",
+                "qzone",
+                "tsina",
+                "renren",
+                "douban",
+                "tqq"
+            ]
+        }
+    };
+    with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+  </body>
+</html>
+

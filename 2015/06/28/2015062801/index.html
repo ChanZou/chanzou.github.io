@@ -1,0 +1,478 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+  <meta name="baidu_union_verify" content="d1952c66cf48912e21c18c7c581f382a">
+  <meta name="360-site-verification" content="67fbcc5a67f4c65c057315b28fa0b2c8" />
+<meta name="google-site-verification" content="2GzxQ0VtXwTSUdmGm6DzcmhTzM_I9QmzCb_pzpMzD88" />
+  
+    <title>F检验和其含义 | Sponge No.43</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Chan Zou">
+    
+    <meta name="description" content="F检验F检验又叫方差齐性检验。要对从两研究对象中随机抽取的两组样本进行比较的时候，首先要判断两总体方差是否相同。若相同，则可直接用t检验。因此F检验时决定如何选择何种t检验的前提条件。
+在多元的线性回归中，仅仅通过检验每个变量的p值而确定其显著性是不够的。其原因是就算变量的p值都很小，也并不能保证存">
+    
+    
+    
+    
+    <link rel="alternate" href="atom.xml" title="Sponge No.43" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            var _bdId ='391982416296a0d54221f59fe35250d4';
+             hm.src = "//hm.baidu.com/hm.js?" + _bdId;
+             var s = document.getElementsByTagName("script")[0]; 
+             s.parentNode.insertBefore(hm, s);
+        })();
+    </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+     
+</head>
+
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Sponge No.43">Sponge No.43</a></h1>
+				<a class="blog-motto"></a>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+                                            <form class="search" action=http://zhannei.baidu.com/cse/search target="_blank">
+                                            <label>Search</label>
+                                        <input name="s" type="hidden" value= null ><input type="text" name="q" size="30" placeholder="搜索"><br>
+					
+					</li>
+				</ul>
+                            </nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/28/2015062801/" title="F检验和其含义" itemprop="url">F检验和其含义</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://yoursite.com" title="Chan Zou">Chan Zou</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-06-29T02:00:00.000Z" itemprop="datePublished">2015-06-28</time>
+    更新日期:<time datetime="2018-02-19T00:07:16.281Z" itemprop="dateModified">2018-02-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#F检验"><span class="toc-number">1.</span> <span class="toc-text">F检验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#F检验公式"><span class="toc-number">2.</span> <span class="toc-text">F检验公式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3个SS"><span class="toc-number">2.1.</span> <span class="toc-text">3个SS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多元线性回归下R^2的变化"><span class="toc-number">2.2.</span> <span class="toc-text">多元线性回归下R^2的变化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多元线性回归下F检验"><span class="toc-number">2.3.</span> <span class="toc-text">多元线性回归下F检验</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+		</div>
+		
+		<h2 id="F检验">F检验</h2><p>F检验又叫方差齐性检验。要对从两研究对象中随机抽取的两组样本进行比较的时候，首先要判断两总体方差是否相同。若相同，则可直接用t检验。因此F检验时决定如何选择何种t检验的前提条件。</p>
+<p>在多元的线性回归中，仅仅通过检验每个变量的p值而确定其显著性是不够的。其原因是就算变量的p值都很小，也并不能保证存在变量显著（尤其在变量较多的情况下。）就算所有变量不显著，p值完全随机，也会有5%左右的变量的p值小于0.05。也就是说我们几乎总会看到小p值的变量（～100%）。我们会认为这些变量是显著的，0假设是不成立的。但是F检验因为消除了自由度的影响（也就是变量个数的影响），在0假设成立的情况下也只有5%的机会小于0.05，大大提高了可信度。</p>
+<h2 id="F检验公式">F检验公式</h2><h3 id="3个SS">3个SS</h3><p>在线性回归中存在3个SS。他们分别是TSS（总平方和）、RSS（残差平方和）和ESS（回归平方和）。其中有关系：</p>
+<blockquote>
+<p>TSS = RSS+ESS<br>RSS表示的是未被线性回归模型解释的部份（偏离模型的部分）。</p>
+</blockquote>
+<h3 id="多元线性回归下R^2的变化">多元线性回归下R^2的变化</h3><p>R^2模型能解释的部分与总体偏差之比（ESS/TSS）。但是在多元情况下，模型中每增加一个解释变量，尽管模型总体表现可能更好，R^2往往也会随之增大。因为残差平方和总是增加的。因此在多元情况下，需要剔除自由度的影响。于是有：<br><img src="http://www.forkosh.com/mathtex.cgi? R^2=1-\frac{RSS/(n-k-1)}{TSS/(n-1)}"></p>
+<h3 id="多元线性回归下F检验">多元线性回归下F检验</h3><p>F检验从计算F统计量开始：<br><img src="http://www.forkosh.com/mathtex.cgi?F=\frac{ESS/k}{RSS/(n-k-1)}"></p>
+<p>为何ESS的自由度是k?因为在回归函数中有k+1个（包括常数项），而k个参数受一个约束条件即y的平均值制约，所以RSS有k个自由度。</p>
+<p>而TSS显然有n-1个自由度（n个观测值，受y平均值的制约。）卡方函数的自由度可以线性叠加，所以RSS有n-k-1和自由度。当然也可以从正面计算RSS的自由度。RSS有n个残差，受k+1个参数的制约。因此有以上公式。</p>
+<p>接下来要考虑的是F统计量怎样反应模型的显著性的问题。对此，当设定好检验水平时，我们可以查询F值表。当F&gt;F值表中值时，我们可以拒绝H0假设。</p>
+<h2 id="总结">总结</h2><p>拟合优度（改进后的R^2）是从意境估计的模型出发，检验它对样本观测值的拟合程度；而F检验是从样本观测值出发检验模型总日的线性关系显著性。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Statistics/">Statistics</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://yoursite.com/2015/06/28/2015062801/" data-title="F检验和其含义 | Sponge No.43" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/06/29/2015062802/" title="How to insert a mathematical equation">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  How to insert a mathematical equation</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/06/21/20150621/"  title="2nd Day in Thailand and I don&#39;t like beer here">
+ <strong>NEXT:</strong><br/> 
+ <span>2nd Day in Thailand and I don&#39;t like beer here
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	
+	<div class="ds-thread" data-title="F检验和其含义" data-thread-key="2015062801" data-author-key="Chan Zou" data-url="http://yoursite.com/post/2015062801"></div>
+	
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#F检验"><span class="toc-number">1.</span> <span class="toc-text">F检验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#F检验公式"><span class="toc-number">2.</span> <span class="toc-text">F检验公式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3个SS"><span class="toc-number">2.1.</span> <span class="toc-text">3个SS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多元线性回归下R^2的变化"><span class="toc-number">2.2.</span> <span class="toc-text">多元线性回归下R^2的变化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多元线性回归下F检验"><span class="toc-number">2.3.</span> <span class="toc-text">多元线性回归下F检验</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	<div class="social-list" class="clearfix">
+		
+		
+		
+		
+		
+	</div>
+</div>
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Algorithm/" title="Algorithm">Algorithm<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Data-Structure/" title="Data Structure">Data Structure<sup>2</sup></a></li>
+		
+			<li><a href="/tags/HDL/" title="HDL">HDL<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/MOOCs/" title="MOOCs">MOOCs<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Neural-Network/" title="Neural Network">Neural Network<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Statistics/" title="Statistics">Statistics<sup>3</sup></a></li>
+		
+			<li><a href="/tags/hexo/" title="hexo">hexo<sup>3</sup></a></li>
+		
+			<li><a href="/tags/spider/" title="spider">spider<sup>1</sup></a></li>
+		
+			<li><a href="/tags/spiders/" title="spiders">spiders<sup>2</sup></a></li>
+		
+			<li><a href="/tags/travel/" title="travel">travel<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情鏈接</p>
+    <ul>
+      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
+      <li><a href="http://gengbiao.me" target="_blank" title="coney">coney's Blog</a></li>
+    </ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="atom.xml" target="_blank" title="rss">RSS 訂閱</a>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">標簽雲</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Algorithm/" style="font-size: 13.33px;">Algorithm</a><a href="/tags/Data-Structure/" style="font-size: 13.33px;">Data Structure</a><a href="/tags/HDL/" style="font-size: 10px;">HDL</a><a href="/tags/Hadoop/" style="font-size: 10px;">Hadoop</a><a href="/tags/MOOCs/" style="font-size: 20px;">MOOCs</a><a href="/tags/Neural-Network/" style="font-size: 20px;">Neural Network</a><a href="/tags/Statistics/" style="font-size: 16.67px;">Statistics</a><a href="/tags/hexo/" style="font-size: 16.67px;">hexo</a><a href="/tags/spider/" style="font-size: 10px;">spider</a><a href="/tags/spiders/" style="font-size: 13.33px;">spiders</a><a href="/tags/travel/" style="font-size: 10px;">travel</a>
+    </div>
+  </div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+    
+            <p class="copyright"> © 2018 
+		
+		<a href="http://yoursite.com" target="_blank" title="Chan Zou">Chan Zou</a>
+		
+            && Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> && Theme by <a href="http://gengbiao.me" target="_blank" title="coney">coney</a>
+            </div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+<script>
+    
+        var _bdImg = '4';
+    
+    window._bd_share_config={
+        "common":{
+            "bdSnsKey":{
+
+            },
+            "bdText":"",
+            "bdMini":"2",
+            "bdMiniList":[
+                "qzone",
+                "tsina",
+                "weixin",
+                "renren",
+                "tqq",
+                "tieba",
+                "douban",
+                "sqq",
+                "diandian",
+                "huaban",
+                "youdao",
+                "mail",
+                "ty",
+                "fbook",
+                "twi",
+                "linkedin",
+                "copy",
+                "print"
+            ],
+            "bdPic":"",
+            "bdStyle":"0",
+            "bdSize":"16"
+        },
+        "slide":{
+            "type":"slide",
+            "bdImg":_bdImg,
+            "bdPos":"right",
+            "bdTop":"350"
+        },
+        "image":{
+            "viewList":[
+                "weixin",
+                "qzone",
+                "tsina",
+                "renren",
+                "douban",
+                "tqq"
+            ],
+            "viewText":"分享：",
+            "viewSize":"16"
+        },
+        "selectShare":{
+            "bdContainerClass":null,
+            "bdSelectMiniList":[
+                "weixin",
+                "qzone",
+                "tsina",
+                "renren",
+                "douban",
+                "tqq"
+            ]
+        }
+    };
+    with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+  </body>
+</html>
+

@@ -1,0 +1,475 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+  <meta name="baidu_union_verify" content="d1952c66cf48912e21c18c7c581f382a">
+  <meta name="360-site-verification" content="67fbcc5a67f4c65c057315b28fa0b2c8" />
+<meta name="google-site-verification" content="2GzxQ0VtXwTSUdmGm6DzcmhTzM_I9QmzCb_pzpMzD88" />
+  
+    <title>K-Means Realization in Hadoop | Sponge No.43</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Chan Zou">
+    
+    <meta name="description" content="IntroductionThough this article is not written to explain the detail of k-means algo, it is necessary to remember the basic framework. Given a k value">
+    
+    
+    
+    
+    <link rel="alternate" href="atom.xml" title="Sponge No.43" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            var _bdId ='391982416296a0d54221f59fe35250d4';
+             hm.src = "//hm.baidu.com/hm.js?" + _bdId;
+             var s = document.getElementsByTagName("script")[0]; 
+             s.parentNode.insertBefore(hm, s);
+        })();
+    </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+     
+</head>
+
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Sponge No.43">Sponge No.43</a></h1>
+				<a class="blog-motto"></a>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+                                            <form class="search" action=http://zhannei.baidu.com/cse/search target="_blank">
+                                            <label>Search</label>
+                                        <input name="s" type="hidden" value= null ><input type="text" name="q" size="30" placeholder="搜索"><br>
+					
+					</li>
+				</ul>
+                            </nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/04/03/2016040301/" title="K-Means Realization in Hadoop" itemprop="url">K-Means Realization in Hadoop</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://yoursite.com" title="Chan Zou">Chan Zou</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-04-03T04:00:00.000Z" itemprop="datePublished">2016-04-03</time>
+    更新日期:<time datetime="2018-02-19T00:07:16.281Z" itemprop="dateModified">2018-02-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Introduction"><span class="toc-number">1.</span> <span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Realization"><span class="toc-number">2.</span> <span class="toc-text">Realization</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Code"><span class="toc-number">3.</span> <span class="toc-text">Code</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Some_Thoughts"><span class="toc-number">4.</span> <span class="toc-text">Some Thoughts</span></a></li></ol>
+		</div>
+		
+		<h3 id="Introduction">Introduction</h3><p>Though this article is not written to explain the detail of k-means algo, it is necessary to remember the basic framework. Given a k value, the algo update centroids’ coordinates in a two-step fashion every loop. Loops will be ended if certain number of times are run or convergence condition is satisfied. Both are given by user.</p>
+<h3 id="Realization">Realization</h3><p>Features of this application include:</p>
+<ol>
+<li>No extra storage needed. After every loop, the intermidiate file will be updated so there is no accumulation in disk consumption.</li>
+<li>Every loop the newly updated centroid file is automatically cached into the distributed cache to accelerate every job.</li>
+<li>Free choice of convergence condition and K value.</li>
+<li>Combiner is used to reduce reducers’ work load.<h3 id="Code">Code</h3><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.hadoop.conf.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.fs.FileSystem;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.fs.Path;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.io.Text;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.Job;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.Mapper;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.Reducer;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.lib.db.FloatSplitter;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.lib.input.FileInputFormat;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.filecache.DistributedCache;</span><br><span class="line"><span class="keyword">import</span> org.apache.hadoop.fs.FileSystem;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.net.URI;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> class p3s2 &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> class KMapper</span><br><span class="line">            extends Mapper&lt;<span class="keyword">Object</span>, Text, Text, Text&gt; &#123;</span><br><span class="line">        <span class="built_in">float</span>[][] current_C;</span><br><span class="line">        @Override</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setup</span>(Context context) <span class="keyword">throws</span> IOException, InterruptedException &#123;</span><br><span class="line">            Path[] caches = DistributedCache.getLocalCacheFiles(context.getConfiguration());</span><br><span class="line">            <span class="comment">//FileSystem fs = FileSystem.getLocal(context.getConfiguration());</span></span><br><span class="line">            <span class="keyword">BufferedReader</span> cachereader = <span class="keyword">new</span> <span class="keyword">BufferedReader</span>(<span class="keyword">new</span> FileReader(caches[<span class="number">0</span>].toString()));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">String</span> temp = cachereader.readLine();</span><br><span class="line"></span><br><span class="line">            <span class="built_in">int</span> K = Integer.parseInt(context.getConfiguration().<span class="built_in">get</span>(<span class="string">"K"</span>));</span><br><span class="line">            current_C = <span class="keyword">new</span> <span class="built_in">float</span>[K][<span class="number">2</span>];</span><br><span class="line">            <span class="keyword">while</span> (temp!=<span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">String</span>[] centroid = temp.<span class="built_in">split</span>(<span class="string">"\t"</span>);</span><br><span class="line">                <span class="keyword">String</span>[] coordinate = centroid[<span class="number">1</span>].<span class="built_in">split</span>(<span class="string">","</span>);</span><br><span class="line">                current_C[Integer.parseInt(centroid[<span class="number">0</span>])][<span class="number">0</span>] = Float.parseFloat(coordinate[<span class="number">0</span>]);</span><br><span class="line">                current_C[Integer.parseInt(centroid[<span class="number">0</span>])][<span class="number">1</span>] = Float.parseFloat(coordinate[<span class="number">1</span>]);</span><br><span class="line">                temp = cachereader.readLine();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="built_in">map</span>(<span class="keyword">Object</span> <span class="variable">key</span>, Text value, Context context</span><br><span class="line">        ) <span class="keyword">throws</span> IOException, InterruptedException &#123;</span><br><span class="line">            <span class="keyword">String</span>[] record = value.toString().<span class="built_in">split</span>(<span class="string">","</span>);</span><br><span class="line">            Float[] <span class="built_in">point</span> = <span class="keyword">new</span> Float[<span class="number">2</span>];</span><br><span class="line">            <span class="built_in">point</span>[<span class="number">0</span>] = Float.parseFloat(record[<span class="number">0</span>]);</span><br><span class="line">            <span class="built_in">point</span>[<span class="number">1</span>] = Float.parseFloat(record[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">            Float[] distances = <span class="keyword">new</span> Float[current_C.length];</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">int</span> i=<span class="number">0</span>; i&lt;current_C.length; i++) &#123;</span><br><span class="line">                distances[i] = (<span class="built_in">float</span>) Math.<span class="built_in">sqrt</span>(Math.<span class="built_in">pow</span>((<span class="built_in">point</span>[<span class="number">0</span>]-current_C[i][<span class="number">0</span>]),<span class="number">2</span>)+</span><br><span class="line">                        Math.<span class="built_in">pow</span>((<span class="built_in">point</span>[<span class="number">1</span>]-current_C[i][<span class="number">1</span>]),<span class="number">2</span>));</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.<span class="built_in">print</span>(distances[<span class="number">0</span>]+<span class="string">","</span>+distances[<span class="number">1</span>]);</span><br><span class="line">            <span class="built_in">int</span> pointer = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">int</span> i=<span class="number">1</span>; i&lt;current_C.length; i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (distances[i]&lt;distances[pointer]) &#123;</span><br><span class="line">                    pointer = i;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            context.write(<span class="keyword">new</span> Text(Integer.toString(pointer)), <span class="keyword">new</span> Text(record[<span class="number">0</span>]+<span class="string">","</span>+record[<span class="number">1</span>]+<span class="string">","</span>+<span class="string">"1"</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> class KReducer</span><br><span class="line">            extends Reducer&lt;Text, Text, Text, Text&gt; &#123;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> reduce(Text <span class="variable">key</span>, Iterable&lt;Text&gt; values,</span><br><span class="line">                           Context context</span><br><span class="line">        ) <span class="keyword">throws</span> IOException, InterruptedException &#123;</span><br><span class="line">            <span class="built_in">int</span> count = <span class="number">0</span>;</span><br><span class="line">            <span class="built_in">float</span>[] sum = <span class="keyword">new</span> <span class="built_in">float</span>[<span class="number">2</span>];</span><br><span class="line">            <span class="keyword">for</span> (Text value: values) &#123;</span><br><span class="line">                <span class="keyword">String</span>[] record = value.toString().<span class="built_in">split</span>(<span class="string">","</span>);</span><br><span class="line">                sum[<span class="number">0</span>] += Float.parseFloat(record[<span class="number">0</span>]);</span><br><span class="line">                sum[<span class="number">1</span>] += Float.parseFloat(record[<span class="number">1</span>]);</span><br><span class="line">                count += Integer.parseInt(record[<span class="number">2</span>]);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="built_in">float</span>[] average = &#123;sum[<span class="number">0</span>]/(<span class="built_in">float</span>)count, sum[<span class="number">1</span>]/(<span class="built_in">float</span>)count&#125;;</span><br><span class="line">            context.write(<span class="variable">key</span>, <span class="keyword">new</span> Text(<span class="keyword">String</span>.valueOf(average[<span class="number">0</span>])+<span class="string">","</span>+<span class="keyword">String</span>.valueOf(average[<span class="number">1</span>])+<span class="string">","</span>+<span class="keyword">String</span>.valueOf(count)));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> class KCombiner</span><br><span class="line">            extends Reducer&lt;Text, Text, Text, Text&gt; &#123;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> reduce(Text <span class="variable">key</span>, Iterable&lt;Text&gt; values,</span><br><span class="line">                           Context context</span><br><span class="line">        ) <span class="keyword">throws</span> IOException, InterruptedException &#123;</span><br><span class="line">            <span class="built_in">int</span> count = <span class="number">0</span>;</span><br><span class="line">            <span class="built_in">float</span>[] sum = <span class="keyword">new</span> <span class="built_in">float</span>[<span class="number">2</span>];</span><br><span class="line">            <span class="keyword">for</span> (Text value: values) &#123;</span><br><span class="line">                <span class="keyword">String</span>[] record = value.toString().<span class="built_in">split</span>(<span class="string">","</span>);</span><br><span class="line">                sum[<span class="number">0</span>] += Float.parseFloat(record[<span class="number">0</span>]);</span><br><span class="line">                sum[<span class="number">1</span>] += Float.parseFloat(record[<span class="number">1</span>]);</span><br><span class="line">                count += Integer.parseInt(record[<span class="number">2</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">            context.write(<span class="variable">key</span>, <span class="keyword">new</span> Text(Float.toString(sum[<span class="number">0</span>])+<span class="string">","</span>+Float.toString(sum[<span class="number">1</span>])+<span class="string">","</span>+Integer.toString(count)));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">boolean</span> isConverge(Path pre, Path cur, <span class="built_in">float</span> threshold, FileSystem fs) <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="keyword">BufferedReader</span> bf1 = <span class="keyword">new</span> <span class="keyword">BufferedReader</span>(<span class="keyword">new</span> InputStreamReader(fs.<span class="built_in">open</span>(pre)));</span><br><span class="line">        <span class="keyword">BufferedReader</span> bf2 = <span class="keyword">new</span> <span class="keyword">BufferedReader</span>(<span class="keyword">new</span> InputStreamReader(fs.<span class="built_in">open</span>(cur)));</span><br><span class="line">        <span class="keyword">String</span> temp1 = bf1.readLine();</span><br><span class="line">        <span class="keyword">String</span> temp2 = bf2.readLine();</span><br><span class="line">        <span class="keyword">while</span> (temp1!=<span class="keyword">null</span>&amp;&amp;temp2!=<span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">String</span>[] record1 = temp1.<span class="built_in">split</span>(<span class="string">"\t"</span>)[<span class="number">1</span>].<span class="built_in">split</span>(<span class="string">","</span>);</span><br><span class="line">            <span class="keyword">String</span>[] record2 = temp2.<span class="built_in">split</span>(<span class="string">"\t"</span>)[<span class="number">1</span>].<span class="built_in">split</span>(<span class="string">","</span>);</span><br><span class="line">            <span class="built_in">float</span> current_C_X = Float.parseFloat(record2[<span class="number">0</span>]);</span><br><span class="line">            <span class="built_in">float</span> current_C_Y = Float.parseFloat(record2[<span class="number">1</span>]);</span><br><span class="line">            <span class="built_in">float</span> previous_C_X = Float.parseFloat(record1[<span class="number">0</span>]);</span><br><span class="line">            <span class="built_in">float</span> previous_C_Y = Float.parseFloat(record1[<span class="number">1</span>]);</span><br><span class="line">            <span class="keyword">if</span> (!(previous_C_X - threshold &lt; current_C_X &amp;&amp; current_C_X &lt; previous_C_X + threshold</span><br><span class="line">                    &amp;&amp; previous_C_Y - threshold &lt; current_C_Y &amp;&amp; current_C_Y &lt; previous_C_Y + threshold)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            temp1 = bf1.readLine();</span><br><span class="line">            temp2 = bf2.readLine();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(<span class="keyword">String</span>[] args) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">if</span> (args.length != <span class="number">6</span>) &#123;</span><br><span class="line">            System.err.<span class="built_in">println</span>(<span class="string">"Usage: Kmeans &lt;HDFS cached file&gt; &lt;HDFS input file&gt; &lt;HDFS output dir&gt; &lt;HDFS output file&gt; &lt;threshold&gt; &lt;K&gt;"</span>);</span><br><span class="line">            System.<span class="built_in">exit</span>(<span class="number">2</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">int</span> iter = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//!(isConverge(iter, Float.parseFloat(args[4])</span></span><br><span class="line">        <span class="keyword">while</span> (iter&lt;<span class="number">6</span>) &#123;</span><br><span class="line">            Configuration conf = <span class="keyword">new</span> Configuration();</span><br><span class="line">            conf.<span class="built_in">set</span>(<span class="string">"K"</span>, args[<span class="number">5</span>]);</span><br><span class="line">            Job job = <span class="keyword">new</span> Job(conf);</span><br><span class="line">            job.setJarByClass(p3s2.class);</span><br><span class="line">            job.setMapperClass(KMapper.class);</span><br><span class="line">            job.setCombinerClass(KCombiner.class);</span><br><span class="line">            job.setReducerClass(KReducer.class);</span><br><span class="line">            job.setOutputKeyClass(Text.class);</span><br><span class="line">            job.setNumReduceTasks(<span class="number">1</span>);</span><br><span class="line">            job.setOutputValueClass(Text.class);</span><br><span class="line"></span><br><span class="line">            DistributedCache.createSymlink(job.getConfiguration());</span><br><span class="line">            DistributedCache.addCacheFile(<span class="keyword">new</span> URI(args[<span class="number">0</span>]), job.getConfiguration());</span><br><span class="line">            FileInputFormat.addInputPath(job, <span class="keyword">new</span> Path(args[<span class="number">1</span>]));</span><br><span class="line"></span><br><span class="line">            FileSystem fs = FileSystem.<span class="built_in">get</span>(conf);</span><br><span class="line">            <span class="keyword">if</span> (fs.exists(<span class="keyword">new</span> Path(args[<span class="number">3</span>]))) &#123;</span><br><span class="line">                <span class="keyword">if</span> (isConverge(<span class="keyword">new</span> Path(args[<span class="number">0</span>]), <span class="keyword">new</span> Path(args[<span class="number">3</span>]), Float.parseFloat(args[<span class="number">4</span>]), fs)) &#123;System.<span class="built_in">exit</span>(<span class="number">0</span>);&#125;</span><br><span class="line">                fs.copyToLocalFile(<span class="keyword">new</span> Path(args[<span class="number">3</span>]), <span class="keyword">new</span> Path(<span class="string">"./"</span>));</span><br><span class="line">                fs.copyFromLocalFile(<span class="keyword">true</span>, <span class="keyword">true</span>, <span class="keyword">new</span> Path(<span class="string">"./part-r-00000"</span>), <span class="keyword">new</span> Path(args[<span class="number">0</span>]));</span><br><span class="line">                fs.delete(<span class="keyword">new</span> Path(args[<span class="number">2</span>]), <span class="keyword">true</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            FileOutputFormat.setOutputPath(job, <span class="keyword">new</span> Path(args[<span class="number">2</span>]));</span><br><span class="line">            iter += <span class="number">1</span>;</span><br><span class="line">            job.waitForCompletion(<span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Some_Thoughts">Some Thoughts</h3><p>K-means fits MapReduce frame naturally, which makes it much faster to calculate. Yet, no matter how absurd K value is set, the algorithm will always converge. Only through cross validation can we decide a proper K, which cost extra computational resource. </p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Algorithm/">Algorithm</a><a href="/tags/Hadoop/">Hadoop</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://yoursite.com/2016/04/03/2016040301/" data-title="K-Means Realization in Hadoop | Sponge No.43" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/11/08/2016110801/" title="Variational Autoencoder, A Generative Deep Model (1)">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Variational Autoencoder, A Generative Deep Model (1)</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/02/22/2016022201/"  title="Neural Network for Machine Learning Note (7)">
+ <strong>NEXT:</strong><br/> 
+ <span>Neural Network for Machine Learning Note (7)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	
+	<div class="ds-thread" data-title="K-Means Realization in Hadoop" data-thread-key="2016040301" data-author-key="Chan Zou" data-url="http://yoursite.com/post/2016040301"></div>
+	
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Introduction"><span class="toc-number">1.</span> <span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Realization"><span class="toc-number">2.</span> <span class="toc-text">Realization</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Code"><span class="toc-number">3.</span> <span class="toc-text">Code</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Some_Thoughts"><span class="toc-number">4.</span> <span class="toc-text">Some Thoughts</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	<div class="social-list" class="clearfix">
+		
+		
+		
+		
+		
+	</div>
+</div>
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Algorithm/" title="Algorithm">Algorithm<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Data-Structure/" title="Data Structure">Data Structure<sup>2</sup></a></li>
+		
+			<li><a href="/tags/HDL/" title="HDL">HDL<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/MOOCs/" title="MOOCs">MOOCs<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Neural-Network/" title="Neural Network">Neural Network<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Statistics/" title="Statistics">Statistics<sup>3</sup></a></li>
+		
+			<li><a href="/tags/hexo/" title="hexo">hexo<sup>3</sup></a></li>
+		
+			<li><a href="/tags/spider/" title="spider">spider<sup>1</sup></a></li>
+		
+			<li><a href="/tags/spiders/" title="spiders">spiders<sup>2</sup></a></li>
+		
+			<li><a href="/tags/travel/" title="travel">travel<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情鏈接</p>
+    <ul>
+      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
+      <li><a href="http://gengbiao.me" target="_blank" title="coney">coney's Blog</a></li>
+    </ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="atom.xml" target="_blank" title="rss">RSS 訂閱</a>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">標簽雲</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Algorithm/" style="font-size: 13.33px;">Algorithm</a><a href="/tags/Data-Structure/" style="font-size: 13.33px;">Data Structure</a><a href="/tags/HDL/" style="font-size: 10px;">HDL</a><a href="/tags/Hadoop/" style="font-size: 10px;">Hadoop</a><a href="/tags/MOOCs/" style="font-size: 20px;">MOOCs</a><a href="/tags/Neural-Network/" style="font-size: 20px;">Neural Network</a><a href="/tags/Statistics/" style="font-size: 16.67px;">Statistics</a><a href="/tags/hexo/" style="font-size: 16.67px;">hexo</a><a href="/tags/spider/" style="font-size: 10px;">spider</a><a href="/tags/spiders/" style="font-size: 13.33px;">spiders</a><a href="/tags/travel/" style="font-size: 10px;">travel</a>
+    </div>
+  </div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+    
+            <p class="copyright"> © 2018 
+		
+		<a href="http://yoursite.com" target="_blank" title="Chan Zou">Chan Zou</a>
+		
+            && Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> && Theme by <a href="http://gengbiao.me" target="_blank" title="coney">coney</a>
+            </div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+<script>
+    
+        var _bdImg = '4';
+    
+    window._bd_share_config={
+        "common":{
+            "bdSnsKey":{
+
+            },
+            "bdText":"",
+            "bdMini":"2",
+            "bdMiniList":[
+                "qzone",
+                "tsina",
+                "weixin",
+                "renren",
+                "tqq",
+                "tieba",
+                "douban",
+                "sqq",
+                "diandian",
+                "huaban",
+                "youdao",
+                "mail",
+                "ty",
+                "fbook",
+                "twi",
+                "linkedin",
+                "copy",
+                "print"
+            ],
+            "bdPic":"",
+            "bdStyle":"0",
+            "bdSize":"16"
+        },
+        "slide":{
+            "type":"slide",
+            "bdImg":_bdImg,
+            "bdPos":"right",
+            "bdTop":"350"
+        },
+        "image":{
+            "viewList":[
+                "weixin",
+                "qzone",
+                "tsina",
+                "renren",
+                "douban",
+                "tqq"
+            ],
+            "viewText":"分享：",
+            "viewSize":"16"
+        },
+        "selectShare":{
+            "bdContainerClass":null,
+            "bdSelectMiniList":[
+                "weixin",
+                "qzone",
+                "tsina",
+                "renren",
+                "douban",
+                "tqq"
+            ]
+        }
+    };
+    with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+  </body>
+</html>
+

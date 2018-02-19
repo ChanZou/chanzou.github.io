@@ -1,0 +1,477 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+  <meta name="baidu_union_verify" content="d1952c66cf48912e21c18c7c581f382a">
+  <meta name="360-site-verification" content="67fbcc5a67f4c65c057315b28fa0b2c8" />
+<meta name="google-site-verification" content="2GzxQ0VtXwTSUdmGm6DzcmhTzM_I9QmzCb_pzpMzD88" />
+  
+    <title>Hexo coney主题下博客名字体修改 | Sponge No.43</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Chan Zou">
+    
+    <meta name="description" content="存在的问题出于个性化的需求，我需要把博客名的字体更换一下。coney本身的注解已经很好的指出我需要在哪里进行变动，但是怎样修改variable.styl和font.styl两个文件仍存疑问。
+探索过程初识代码最开始面对font.styl:12345678910customfont(family, f">
+    
+    
+    
+    
+    <link rel="alternate" href="atom.xml" title="Sponge No.43" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            var _bdId ='391982416296a0d54221f59fe35250d4';
+             hm.src = "//hm.baidu.com/hm.js?" + _bdId;
+             var s = document.getElementsByTagName("script")[0]; 
+             s.parentNode.insertBefore(hm, s);
+        })();
+    </script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+     
+</head>
+
+  <body>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><header>
+      <div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Sponge No.43">Sponge No.43</a></h1>
+				<a class="blog-motto"></a>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+					<li>
+					
+                                            <form class="search" action=http://zhannei.baidu.com/cse/search target="_blank">
+                                            <label>Search</label>
+                                        <input name="s" type="hidden" value= null ><input type="text" name="q" size="30" placeholder="搜索"><br>
+					
+					</li>
+				</ul>
+                            </nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/02/18/2015051501/" title="Hexo coney主题下博客名字体修改" itemprop="url">Hexo coney主题下博客名字体修改</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://yoursite.com" title="Chan Zou">Chan Zou</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2018-02-19T00:07:16.281Z" itemprop="datePublished">2018-02-18</time>
+    更新日期:<time datetime="2018-02-19T00:07:16.281Z" itemprop="dateModified">2018-02-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#存在的问题"><span class="toc-number">1.</span> <span class="toc-text">存在的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#探索过程"><span class="toc-number">2.</span> <span class="toc-text">探索过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#初识代码"><span class="toc-number">2.1.</span> <span class="toc-text">初识代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#确定目标"><span class="toc-number">2.2.</span> <span class="toc-text">确定目标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#寻找方案"><span class="toc-number">2.3.</span> <span class="toc-text">寻找方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+		</div>
+		
+		<h2 id="存在的问题">存在的问题</h2><p>出于个性化的需求，我需要把博客名的字体更换一下。coney本身的注解已经很好的指出我需要在哪里进行变动，但是怎样修改variable.styl和font.styl两个文件仍存疑问。</p>
+<h2 id="探索过程">探索过程</h2><h3 id="初识代码">初识代码</h3><p>最开始面对font.styl:<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">customfont</span><span class="params">(family, filename)</span></span></span><br><span class="line">  <span class="at_rule">@font-face</span></span><br><span class="line">    <span class="attribute">font-family</span> family</span><br><span class="line">    <span class="attribute">font-weight</span> <span class="attribute">normal</span></span><br><span class="line">    <span class="attribute">font-style</span> <span class="attribute">normal</span></span><br><span class="line">    src <span class="function"><span class="title">url</span><span class="params">(font-url(filename + <span class="string">'.eot'</span>)</span></span>)</span><br><span class="line">    src <span class="function"><span class="title">url</span><span class="params">(font-url(filename + <span class="string">'.eot?#iefix'</span>)</span></span>) <span class="function"><span class="title">format</span><span class="params">(<span class="string">'embedded-opentype'</span>)</span></span>,</span><br><span class="line">    <span class="function"><span class="title">url</span><span class="params">(font-url(filename + <span class="string">'.svg#'</span>+ family)</span></span>) <span class="function"><span class="title">format</span><span class="params">(<span class="string">'svg'</span>)</span></span>,</span><br><span class="line">    <span class="function"><span class="title">url</span><span class="params">(font-url(filename + <span class="string">'.woff'</span>)</span></span>) <span class="function"><span class="title">format</span><span class="params">(<span class="string">'woff'</span>)</span></span>,</span><br><span class="line">    <span class="function"><span class="title">url</span><span class="params">(font-url(filename + <span class="string">'.ttf'</span>)</span></span>) <span class="function"><span class="title">format</span><span class="params">(<span class="string">'truetype'</span>)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>这样的代码，我很是疑惑。语法不熟悉，功能不明确，似乎无从下手。</p>
+<p>我们再来看看variable.styl这个文件的font字段:<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Font</span></span><br><span class="line"><span class="attribute">font</span>-default = <span class="string">"Helvetica Neue"</span>, <span class="string">"Helvetica"</span>,<span class="string">"Microsoft YaHei"</span>, <span class="string">"WenQuanYi Micro Hei"</span>,Arial, sans-serif</span><br><span class="line"><span class="attribute">font</span>-serif = <span class="string">"Georgia"</span>, serif</span><br><span class="line"><span class="attribute">font</span>-mono = Monaco, Menlo, Consolas, Courier New, monospace</span><br><span class="line"><span class="attribute">font</span>-custom-family = <span class="string">"IndieFlower"</span></span><br><span class="line"><span class="attribute">font</span>-custom-filename = IndieFlower</span><br><span class="line"><span class="attribute">font</span>-<span class="attribute">icon</span>-family = <span class="string">"FontAwesome"</span></span><br><span class="line"><span class="attribute">font</span>-<span class="attribute">icon</span>-filename = fontawesome-webfont</span><br><span class="line"><span class="attribute">font</span>-<span class="attribute">icon</span>-version = <span class="string">"4.0.3"</span></span><br><span class="line">ShowCustomFont = <span class="function"><span class="title">hexo-config</span><span class="params">(<span class="string">"ShowCustomFont"</span>)</span></span></span><br><span class="line"><span class="attribute">font-size</span> = <span class="number">100%</span></span><br><span class="line"><span class="attribute">line-height</span> = <span class="number">1.5</span></span><br></pre></td></tr></table></figure></p>
+<p>似乎是定义了很多参数。</p>
+<p>对其中的值随便百度了下后发现这些是字体的名称，事情到这里似乎已经有点眉目了。。。吗？</p>
+<h3 id="确定目标">确定目标</h3><p>在CSS的font doc中了解了font-family代表着一族字体font-style代表字体需不需要加粗斜体等信息（虽然在这个案例中用处不大但是多知道点总是让人开心的）后，再联系两个文件中反复出现的filename和family两个词，我基本能确定一个中提供参数信息另一个提供函数。<br>于是我需要改动的其实是这两行:<br>    font-custom-family = “IndieFlower”<br>    font-custom-filename = IndieFlower<br>（上面是已经改过的）</p>
+<h3 id="寻找方案">寻找方案</h3><p>从来只用微软雅黑和Times New Romans的我连Serif和Sans Serif的区别都搞不清楚，怎么选择字体呢？况且稍微查查就知道很多字体都需要付费。但是谁说字体没有开源版本！<br>我在开源字体中还发现了coney默认的字体，这更能确定我自己走在正确的方向上。<br>安装过程比较简单，将下载下来的ttf文件在网站上转换成.svg,.eot和.woff文件（这些在程序段中都可以看出来）再塞到font文件夹下。怎么知道是这个文件夹呢？因为coney默认字体也在里面呀。hexo g, hexo d, 解决。</p>
+<h2 id="总结">总结</h2><p>到最后我也没有辨认出这两个.styl文件是什么语言所写，询问他人得到的结果也类似于某种自定义配置的语言。（有认出来的请狠狠打我的脸）但是由于命名清晰，这并不妨碍我进行修改。</p>
+<p>最后的最后<br>来跟我一起念三遍，开源大法好，开源大法好，开源大法好！</p>
+<p>诸位晚安。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/hexo/">hexo</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://yoursite.com/2018/02/18/2015051501/" data-title="Hexo coney主题下博客名字体修改 | Sponge No.43" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/02/18/hello-world/" title="你好，世界">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  你好，世界</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/02/18/2017061001/"  title="Attention Mechanism in Deep Learning">
+ <strong>NEXT:</strong><br/> 
+ <span>Attention Mechanism in Deep Learning
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	
+	<div class="ds-thread" data-title="Hexo coney主题下博客名字体修改" data-thread-key="2015051501" data-author-key="Chan Zou" data-url="http://yoursite.com/post/2015051501"></div>
+	
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#存在的问题"><span class="toc-number">1.</span> <span class="toc-text">存在的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#探索过程"><span class="toc-number">2.</span> <span class="toc-text">探索过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#初识代码"><span class="toc-number">2.1.</span> <span class="toc-text">初识代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#确定目标"><span class="toc-number">2.2.</span> <span class="toc-text">确定目标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#寻找方案"><span class="toc-number">2.3.</span> <span class="toc-text">寻找方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	<div class="social-list" class="clearfix">
+		
+		
+		
+		
+		
+	</div>
+</div>
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Algorithm/" title="Algorithm">Algorithm<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Data-Structure/" title="Data Structure">Data Structure<sup>2</sup></a></li>
+		
+			<li><a href="/tags/HDL/" title="HDL">HDL<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hadoop/" title="Hadoop">Hadoop<sup>1</sup></a></li>
+		
+			<li><a href="/tags/MOOCs/" title="MOOCs">MOOCs<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Neural-Network/" title="Neural Network">Neural Network<sup>7</sup></a></li>
+		
+			<li><a href="/tags/Statistics/" title="Statistics">Statistics<sup>3</sup></a></li>
+		
+			<li><a href="/tags/hexo/" title="hexo">hexo<sup>3</sup></a></li>
+		
+			<li><a href="/tags/spider/" title="spider">spider<sup>1</sup></a></li>
+		
+			<li><a href="/tags/spiders/" title="spiders">spiders<sup>2</sup></a></li>
+		
+			<li><a href="/tags/travel/" title="travel">travel<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情鏈接</p>
+    <ul>
+      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
+      <li><a href="http://gengbiao.me" target="_blank" title="coney">coney's Blog</a></li>
+    </ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="atom.xml" target="_blank" title="rss">RSS 訂閱</a>
+</div>
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">標簽雲</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Algorithm/" style="font-size: 13.33px;">Algorithm</a><a href="/tags/Data-Structure/" style="font-size: 13.33px;">Data Structure</a><a href="/tags/HDL/" style="font-size: 10px;">HDL</a><a href="/tags/Hadoop/" style="font-size: 10px;">Hadoop</a><a href="/tags/MOOCs/" style="font-size: 20px;">MOOCs</a><a href="/tags/Neural-Network/" style="font-size: 20px;">Neural Network</a><a href="/tags/Statistics/" style="font-size: 16.67px;">Statistics</a><a href="/tags/hexo/" style="font-size: 16.67px;">hexo</a><a href="/tags/spider/" style="font-size: 10px;">spider</a><a href="/tags/spiders/" style="font-size: 13.33px;">spiders</a><a href="/tags/travel/" style="font-size: 10px;">travel</a>
+    </div>
+  </div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+    
+            <p class="copyright"> © 2018 
+		
+		<a href="http://yoursite.com" target="_blank" title="Chan Zou">Chan Zou</a>
+		
+            && Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> && Theme by <a href="http://gengbiao.me" target="_blank" title="coney">coney</a>
+            </div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+<script>
+    
+        var _bdImg = '4';
+    
+    window._bd_share_config={
+        "common":{
+            "bdSnsKey":{
+
+            },
+            "bdText":"",
+            "bdMini":"2",
+            "bdMiniList":[
+                "qzone",
+                "tsina",
+                "weixin",
+                "renren",
+                "tqq",
+                "tieba",
+                "douban",
+                "sqq",
+                "diandian",
+                "huaban",
+                "youdao",
+                "mail",
+                "ty",
+                "fbook",
+                "twi",
+                "linkedin",
+                "copy",
+                "print"
+            ],
+            "bdPic":"",
+            "bdStyle":"0",
+            "bdSize":"16"
+        },
+        "slide":{
+            "type":"slide",
+            "bdImg":_bdImg,
+            "bdPos":"right",
+            "bdTop":"350"
+        },
+        "image":{
+            "viewList":[
+                "weixin",
+                "qzone",
+                "tsina",
+                "renren",
+                "douban",
+                "tqq"
+            ],
+            "viewText":"分享：",
+            "viewSize":"16"
+        },
+        "selectShare":{
+            "bdContainerClass":null,
+            "bdSelectMiniList":[
+                "weixin",
+                "qzone",
+                "tsina",
+                "renren",
+                "douban",
+                "tqq"
+            ]
+        }
+    };
+    with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+  </body>
+</html>
+
